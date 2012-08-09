@@ -7,16 +7,19 @@ import javax.servlet.http.HttpServletRequest
 import javax.servlet.http.HttpServletResponse
 import java.io.PrintWriter
 import org.scalatra.scalate.ScalatraRenderContext
-import javax.servlet.ServletContext
-import util.RicherString._
 import javax.servlet.ServletConfig
 import org.slf4j.LoggerFactory
+import org.scalatra.ServiceUnavailable
+import com.ning.http.client.oauth.RequestToken
+import org.scalatra.InternalServerError
 
 class HomeServlet extends ScalatraServlet with ScalateSupport with LiftJsonSupport {
 
   var twitterProvider: OAuthProvider = null
   var twitterApi: TwitterApiCalls = null
   private[this] val logger = LoggerFactory.getLogger(getClass)
+
+  def mongoConfig = servletContext("mongoConfig").asInstanceOf[MongoConfiguration]
 
   override def initialize(config: ServletConfig) {
     super.initialize(config)
@@ -26,7 +29,6 @@ class HomeServlet extends ScalatraServlet with ScalateSupport with LiftJsonSuppo
         twitterApi = new TwitterApiCalls(twitterProvider, callbackUrl(config))
       case _ ⇒ throw new RuntimeException("client id and secret need to be configured")
     }
-
   }
 
   def callbackUrl(config: ServletConfig) = {
@@ -60,19 +62,34 @@ class HomeServlet extends ScalatraServlet with ScalateSupport with LiftJsonSuppo
   }
 
   get("/auth/twitter") {
-
+    twitterApi.fetchRequestToken().fold(
+      err ⇒ ServiceUnavailable(err),
+      tok ⇒ {
+        session("requestToken") = tok
+        redirect(twitterApi.signedAuthorize(tok))
+      })
   }
 
-  post("/auth/twitter/callback") {
+  get("/auth/twitter/callback") {
+    val reqToken = session.get("requestToken").map(_.asInstanceOf[RequestToken]).orNull
+    if (reqToken == null) {
+      InternalServerError("Unexpected state, start over and try again")
+    } else {
+      val accessToken = twitterApi.fetchAccessToken(reqToken, params("verifier"))()
+      accessToken.fold(
+        err ⇒ InternalServerError(err),
+        tok ⇒ {
+          twitterApi.userToken = OAuthToken(tok.getKey(), tok.getSecret())
+          val userProfile = twitterApi.getProfile()
 
+          // Fetch user
+          redirect("/")
+        })
+    }
   }
 
   notFound {
-    // Try to render a ScalateTemplate if no route matched
-    findTemplate(requestPath) map { path ⇒
-      contentType = "text/html"
-      layoutTemplate(path)
-    } orElse serveStaticResource() getOrElse resourceNotFound()
+    serveStaticResource() getOrElse resourceNotFound()
   }
 
   override protected def createRenderContext(req: HttpServletRequest, resp: HttpServletResponse, out: PrintWriter) = {

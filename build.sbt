@@ -24,6 +24,8 @@ libraryDependencies ++= Seq(
   "org.scalatra" % "scalatra-scalate" % "2.2.0-SNAPSHOT",  
   "org.scalatra" % "scalatra-lift-json" % "2.2.0-SNAPSHOT",  
   "com.novus" %% "salat" % "1.9.0",
+  "io.backchat.inflector"  %% "scala-inflector"    % "1.3.3",
+  "commons-codec"            % "commons-codec"          % "1.6",
   "net.databinder.dispatch" %% "core" % "0.9.0",
   "org.scala-tools.time"     % "time_2.9.1"             % "0.5",
   "junit"                    % "junit"                  % "4.10"                % "test",

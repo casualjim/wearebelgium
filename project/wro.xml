@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<groups xmlns="http://www.isdc.ro/wro">
+  <group name='main'>
+    <css>/css/main.less</css>
+    <js>/js/lib/jquery-1.7.2.js</js>
+    <js>/js/lib/bootstrap.js</js>
+    <js>/js/lib/underscore.js</js>
+    <js>/js/app/*.coffee</js>
+    <js>/js/*.coffee</js>
+  </group>
+</groups>

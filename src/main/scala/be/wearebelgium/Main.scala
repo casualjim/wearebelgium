@@ -23,7 +23,6 @@ object Main {
     val webApp = new WebAppContext
     webApp setContextPath "/"
     webApp setResourceBase webapp
-    webApp.setExtraClasspath("target/wro4j")
     webApp setDescriptor (webapp + "/WEB-INF/web.xml")
 
     server setHandler webApp

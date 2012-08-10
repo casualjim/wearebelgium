@@ -167,4 +167,6 @@ wroFile in (Compile, generateResources) <<= (baseDirectory)(_ / "project" / "wro
 
 propertiesFile in (Compile, generateResources) <<= (baseDirectory)(_ / "project" / "wro.properties")
 
+(stage in Compile) <<= (stage in Compile).dependsOn(com.github.siasia.PluginKeys.packageWar in Compile)
+
 // seq(pomGenSettings:_*)

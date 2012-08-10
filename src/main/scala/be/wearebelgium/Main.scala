@@ -19,7 +19,7 @@ object Main {
     connector setMaxIdleTime 90000
     server addConnector connector
 
-    val webapp = "src/main/webapp"
+    val webapp = "target/webapp"
     val webApp = new WebAppContext
     webApp setContextPath "/"
     webApp setResourceBase webapp

@@ -337,7 +337,7 @@ exec java $JAVA_OPTS -cp "@CLASSPATH@" "$MAINCLASS" "$@"
 
         val template = """#!/bin/bash
 @SCRIPT_ROOT_CHECK@
-
+/bin/mkdir -p @JETTY_HOME@/webapps 
 /bin/cp -f "@WARFILE@" "@JETTY_HOME@/webapps" || die "Failed to copy @WARFILE@ to @JETTY_HOME@/webapps"
 
 if test x"$PORT" = x ; then

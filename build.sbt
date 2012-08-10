@@ -141,7 +141,7 @@ buildInfoKeys := Seq[Scoped](name, version, scalaVersion, sbtVersion)
 
 buildInfoPackage := "be.wearebelgium"
 
-seq(startScriptForWarSettings: _*)
+seq(startScriptForClassesSettings: _*)
 
 startScriptJettyVersion in Compile := "8.1.5.v20120716"
 

@@ -118,12 +118,20 @@ seq(scalateSettings:_*)
 
 scalateTemplateDirectory in Compile <<= (baseDirectory) { _ / "src/main/webapp/WEB-INF" }
 
+scalateImports ++= Seq(
+  "import be.wearebelgium.tweets._"
+)
+
 scalateBindings ++= Seq(
   Binding("flash", "scala.collection.Map[String, Any]", defaultValue = "Map.empty"),
   Binding("session", "javax.servlet.http.HttpSession"),
   Binding("sessionOption", "scala.Option[javax.servlet.http.HttpSession]"),
   Binding("params", "scala.collection.Map[String, String]"),
-  Binding("multiParams", "org.scalatra.MultiParams"))
+  Binding("multiParams", "org.scalatra.MultiParams"),
+  Binding("user", "be.wearebelgium.tweets.Participant", defaultValue = "null"),
+  Binding("userOption", "scala.Option[be.wearebelgium.tweets.Participant]", defaultValue = "null"),
+  Binding("isAuthenticated", "scala.Boolean", defaultValue = "false"),
+  Binding("isAnonymous", "scala.Boolean", defaultValue = "true"))
 
 seq(buildInfoSettings: _*)
 

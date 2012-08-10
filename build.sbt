@@ -159,6 +159,15 @@ compile in Compile <<= (compile in Compile).dependsOn(generateResources in Compi
 
 (webappResources in Compile) <+= (targetFolder in generateResources in Compile)
 
+(warPostProcess in Compile) <<= (target in Compile) map { tgt => 
+  val webapp = tgt / "webapp"
+  () => {
+    val files =  Seq(webapp / "WEB-INF" / "lib", webapp / "js", webapp / "css", webapp / "WEB-INF" / "classes")
+    println("deleting: " + files.map(_.getAbsolutePath).mkString("[", ", ", "]"))
+    IO.delete(files)
+  }
+}
+
 outputFolder in (Compile, generateResources) := "assets/"
 
 processorProvider in (Compile, generateResources) := new OAuth2Processors

@@ -12,6 +12,6 @@ addSbtPlugin("com.eed3si9n" % "sbt-buildinfo" % "0.1.2")
 
 addSbtPlugin("com.mojolly.scalate" % "xsbt-scalate-generator" % "0.2.1")
 
-libraryDependencies += "net.liftweb" %% "lift-json" % "2.5-SNAPSHOT"
+libraryDependencies += "net.liftweb" %% "lift-json" % "2.4"
 
 addSbtPlugin("com.bowlingx" % "xsbt-wro4j-plugin" % "0.1.0-SNAPSHOT")

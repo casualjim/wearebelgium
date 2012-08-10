@@ -1,6 +1,7 @@
 package be.wearebelgium.tweets
 
 import org.scalatra._
+import extension.TypedParamSupport
 import org.scalatra.liftjson._
 import scalate.ScalateSupport
 import javax.servlet.http.HttpServletRequest
@@ -13,13 +14,15 @@ import org.scalatra.ServiceUnavailable
 import com.ning.http.client.oauth.RequestToken
 import org.scalatra.InternalServerError
 
-class HomeServlet extends ScalatraServlet with ScalateSupport with LiftJsonSupport {
+class HomeServlet extends ScalatraServlet with ScalateSupport with LiftJsonSupport with TypedParamSupport {
 
   var twitterProvider: OAuthProvider = null
   var twitterApi: TwitterApiCalls = null
   private[this] val logger = LoggerFactory.getLogger(getClass)
 
   def mongoConfig = servletContext("mongoConfig").asInstanceOf[MongoConfiguration]
+  var participantDao: ParticipantDao = null
+  var bookings: MongoCollection = null
 
   override def initialize(config: ServletConfig) {
     super.initialize(config)
@@ -29,6 +32,8 @@ class HomeServlet extends ScalatraServlet with ScalateSupport with LiftJsonSuppo
         twitterApi = new TwitterApiCalls(twitterProvider, callbackUrl(config))
       case _ ⇒ throw new RuntimeException("client id and secret need to be configured")
     }
+    participantDao = new ParticipantDao(mongoConfig.db("participants"))
+    bookings = mongoConfig.db("bookings")
   }
 
   def callbackUrl(config: ServletConfig) = {
@@ -56,8 +61,11 @@ class HomeServlet extends ScalatraServlet with ScalateSupport with LiftJsonSuppo
     }
   }
 
-  get("/") {
+  before() {
     contentType = "text/html"
+  }
+
+  get("/") {
     jade("home", "title" -> "Welcome")
   }
 
@@ -79,13 +87,55 @@ class HomeServlet extends ScalatraServlet with ScalateSupport with LiftJsonSuppo
       accessToken.fold(
         err ⇒ InternalServerError(err),
         tok ⇒ {
-          twitterApi.userToken = OAuthToken(tok.getKey(), tok.getSecret())
+          twitterApi.userToken = OAuthToken(tok.getKey, tok.getSecret)
           val userProfile = twitterApi.getProfile()
-
-          // Fetch user
+          val id = (userProfile \ "id").extract[Long]
+          val part = participantDao.findOne(Map("twitterId" -> id)) getOrElse {
+            val p = Participant(
+              id,
+              (userProfile \ "screen_name").extract[String],
+              (userProfile \ "name").extract[String],
+              (userProfile \ "description").extract[String],
+              (userProfile \ "profile_image_url").extract[String],
+              tok.getKey,
+              tok.getSecret)
+            participantDao.save(p, WriteConcern.Safe)
+            p
+          }
+          session("user") = part
           redirect("/")
         })
     }
+  }
+
+  get("/weeks") {
+    val starting = params.getAs[Int]("from") getOrElse DateTime.now.week.get
+    val maxItems = params.getAs[Int]("pageSize") getOrElse 10
+    WeekList(DefaultWeek(starting), maxItems).withBookings(bookings, participantDao)
+  }
+
+  post("/book/:year/:number") {
+    val year = params("year").toInt
+    val number = params("number").toInt
+    val week = DefaultWeek(number, year)
+    if (!bookings.exists(forWeek(week))) {
+      bookings.save(Map("number" -> number, "year" -> year, "pId" -> user.id))
+    } else {
+      Conflict("The week %s in year %s is already booked.".format(number, year))
+    }
+  }
+
+  private def forWeek(week: Week)(dbo: DBObject) =
+    dbo.getAs[Int]("number") == Some(week.number) && dbo.getAs[Int]("year") == Some(week.year)
+
+  def user: Participant = userOption.orNull
+  def userOption: Option[Participant] = session.get("user").map(_.asInstanceOf[Participant])
+  def isAuthenticated = userOption.isDefined
+  def isAnonymous = userOption.isEmpty
+
+  get("/logout") {
+    session.invalidate()
+    redirect("/")
   }
 
   notFound {

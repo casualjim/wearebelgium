@@ -22,7 +22,8 @@ classpathTypes ~= (_ + "orbit")
 libraryDependencies ++= Seq(
   "org.scalatra" % "scalatra" % "2.2.0-SNAPSHOT",
   "org.scalatra" % "scalatra-scalate" % "2.2.0-SNAPSHOT",  
-  "org.scalatra" % "scalatra-lift-json" % "2.2.0-SNAPSHOT",  
+  "org.scalatra" % "scalatra-lift-json" % "2.2.0-SNAPSHOT",
+  "org.scalatra" % "contrib-commons" % "1.1.0-SNAPSHOT",
   "com.novus" %% "salat" % "1.9.0",
   "io.backchat.inflector"  %% "scala-inflector"    % "1.3.3",
   "commons-codec"            % "commons-codec"          % "1.6",

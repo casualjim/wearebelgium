@@ -1,3 +1,49 @@
-#home Hello world
+-@ val weeks: Seq[Week] = Nil
 
-a(href="/auth/twitter") Log in with twitter
+.hero-unit
+  h1 We Are Belgium
+  p Random belgian people tweeting 
+  p
+
+- weeks.foreach { week =>
+  - val rowId = week.number.toString + "-" + week.year.toString
+  - import org.joda.time.format.DateTimeFormat.shortDate
+  .row(id=rowId)
+    .span12
+      .row
+        .span1.centered= week.number
+        .span7 
+          h4
+            | Week from 
+            strong= week.startDate.toString(shortDate)
+            | to 
+            strong= week.endDate.toString(shortDate)
+            &= if (week.isBooked) "" else " is stil free!"
+      .row
+        .span7.offset1
+          - if (week.isBooked) {
+            - val participant = week.participant.get
+            .row
+              .span2
+                - val imageUrl = "https://api.twitter.com/1/users/profile_image?screen_name=" + participant.screenName + "&size=reasonably_small" 
+                img.size128(src=imageUrl)
+              .span5
+                - val profileUrl = "https://twitter.com/" + participant.screenName 
+                h3 
+                  | Featuring 
+                  a(href=profileUrl target="_blank") #{participant.name.blankOption.getOrElse(participant.screenName)}
+                p              
+                  a(href=profileUrl target="_blank") @#{participant.screenName}
+                p= participant.bio
+          - } else {
+            p This row could have your profile featured if you book this week to be tweetin
+            - if (isAnonymous)
+              - val signInUrl = "/auth/twitter?start=" + week.number + "&year=" + week.year
+              a.btn.btn-primary(href=signInUrl) Sign in &amp; book
+            - else
+              - val formUrl = "/book/" + week.year + "/" + week.number
+              form(method="post" action=formUrl) 
+                button.btn.btn-primary.book-week(type="submit") Book this week
+          - }
+      p &nbsp;
+- }

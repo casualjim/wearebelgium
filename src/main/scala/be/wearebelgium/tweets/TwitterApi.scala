@@ -18,7 +18,7 @@ trait TwitterApiUrls extends oauth.SomeEndpoints {
 
   val accessToken: String = "https://api.twitter.com/oauth/access_token"
 
-  val authorize: String = "https://api.twitter.com/oauth/authorize"
+  val authorize: String = "https://api.twitter.com/oauth/authenticate"
 }
 
 class TwitterApiCalls(userToken: OAuthToken, provider: OAuthProvider, val callback: String)(implicit formats: Formats)

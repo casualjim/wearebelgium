@@ -12,12 +12,12 @@ import javax.servlet.ServletConfig
 import org.slf4j.LoggerFactory
 import org.scalatra.ServiceUnavailable
 import com.ning.http.client.oauth.RequestToken
+import be.wearebelgium.util.Logging
 
-class HomeServlet extends ScalatraServlet with ScalateSupport with SessionSupport with FlashMapSupport with LiftJsonSupport with TypedParamSupport {
+class HomeServlet extends ScalatraServlet with Logging with ScalateSupport with SessionSupport with FlashMapSupport with LiftJsonSupport with TypedParamSupport {
 
   var twitterProvider: OAuthProvider = null
   var twitterApi: TwitterApiCalls = null
-  private[this] val logger = LoggerFactory.getLogger(getClass)
 
   def mongoConfig = servletContext("mongoConfig").asInstanceOf[MongoConfiguration]
   var participantDao: ParticipantDao = null
@@ -40,8 +40,8 @@ class HomeServlet extends ScalatraServlet with ScalateSupport with SessionSuppor
   }
 
   def callbackUrl(config: ServletConfig) = {
-    val pub = config.getInitParameter("publicUrl").blankOption getOrElse "http://test.flanders.co.nz:8080"
-    pub + urlWithContextPath("/auth/twitter/callback")
+    val pub = config.getInitParameter("publicUrl")
+    pub + urlWithContextPath("auth/twitter/callback")
   }
 
   private[this] def urlWithContextPath(path: String, params: Iterable[(String, Any)] = Iterable.empty): String = {
@@ -83,12 +83,13 @@ class HomeServlet extends ScalatraServlet with ScalateSupport with SessionSuppor
 
   get("/auth/twitter/callback") {
     val reqToken = session.get("requestToken").map(_.asInstanceOf[RequestToken]).orNull
+
     if (reqToken == null) {
       user = null
       flash("error") = "Unexpected state, start over and try again"
       redirect("/")
     } else {
-      val accessToken = twitterApi.fetchAccessToken(reqToken, params("verifier"))()
+      val accessToken = twitterApi.fetchAccessToken(reqToken, params("oauth_verifier"))()
       accessToken.fold(
         err ⇒ {
           flash("error") = err
@@ -110,16 +111,14 @@ class HomeServlet extends ScalatraServlet with ScalateSupport with SessionSuppor
             p
           }
           user = part
+          flash("success") = "Welcome, " + part.name.blankOption.getOrElse(part.screenName)
           redirect("/")
         })
     }
   }
 
   post("/book/:year/:number") {
-    if (isAnonymous) {
-      flash("error") = "You need to be signed in to book a week."
-      redirect("/")
-    }
+    needsAuth()
     val year = params("year").toInt
     val number = params("number").toInt
     val week = DefaultWeek(number, year)
@@ -134,6 +133,7 @@ class HomeServlet extends ScalatraServlet with ScalateSupport with SessionSuppor
   }
 
   post("/update") {
+    needsAuth()
     twitterApi.clientFor(user).postUpdate(params("update_text")).fold(
       err ⇒ ServiceUnavailable("Posting the tweet failed because: " + err.getMessage),
       tweet ⇒ {
@@ -141,6 +141,13 @@ class HomeServlet extends ScalatraServlet with ScalateSupport with SessionSuppor
         flash("success") = "Tweet posted!"
         redirect("/")
       })
+  }
+
+  private def needsAuth() {
+    if (isAnonymous) {
+      flash("error") = "You need to be signed in to access that functionality."
+      redirect("/")
+    }
   }
 
   private def weeks = {
@@ -164,6 +171,7 @@ class HomeServlet extends ScalatraServlet with ScalateSupport with SessionSuppor
   }
 
   notFound {
+    contentType = null
     serveStaticResource() getOrElse resourceNotFound()
   }
 

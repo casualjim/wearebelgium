@@ -125,13 +125,13 @@ scalateImports ++= Seq(
 scalateBindings ++= Seq(
   Binding("flash", "scala.collection.Map[String, Any]", defaultValue = "Map.empty"),
   Binding("session", "javax.servlet.http.HttpSession"),
-  Binding("sessionOption", "scala.Option[javax.servlet.http.HttpSession]"),
+  Binding("sessionOption", "Option[javax.servlet.http.HttpSession]"),
   Binding("params", "scala.collection.Map[String, String]"),
   Binding("multiParams", "org.scalatra.MultiParams"),
-  Binding("user", "be.wearebelgium.tweets.Participant", defaultValue = "null"),
-  Binding("userOption", "scala.Option[be.wearebelgium.tweets.Participant]", defaultValue = "null"),
-  Binding("isAuthenticated", "scala.Boolean", defaultValue = "false"),
-  Binding("isAnonymous", "scala.Boolean", defaultValue = "true"))
+  Binding("user", "Participant", defaultValue = "null"),
+  Binding("userOption", "Option[Participant]", defaultValue = "null"),
+  Binding("isAuthenticated", "Boolean", defaultValue = "false"),
+  Binding("isAnonymous", "Boolean", defaultValue = "true"))
 
 seq(buildInfoSettings: _*)
 
@@ -145,7 +145,7 @@ seq(startScriptForWarSettings: _*)
 
 startScriptJettyVersion in Compile := "8.1.5.v20120716"
 
-startScriptJettyChecksum in Compile := "83ab4d014f4f5c6e378df783d680d4e2aeff3883"
+startScriptJettyChecksum in Compile := "5cac2f735d5ca34b3ee6e04ef932d2dbd962fdc5"
 
 startScriptJettyURL in Compile <<= (startScriptJettyVersion in Compile) { (version) => "http://download.eclipse.org/jetty/" + version + "/dist/jetty-distribution-" + version + ".zip" }
 

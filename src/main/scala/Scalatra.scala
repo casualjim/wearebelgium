@@ -24,6 +24,10 @@ class Scalatra extends LifeCycle {
     sys.env.get("TWITTER_ACCESS_SECRET") getOrElse "KqkMuFFKAVLxq64q6lFvQjJ7dyGxkvz8W6jxvoinPo"
   }
 
+  val publicUrl = {
+    sys.env.get("WAB_PUBLIC_URL") getOrElse "http://test.flanders.co.nz:8080"
+  }
+
   override def init(context: ServletContext) {
     val home = context.addServlet(classOf[HomeServlet].getName, new HomeServlet)
     home.addMapping("/*")
@@ -31,6 +35,7 @@ class Scalatra extends LifeCycle {
     home.setInitParameter("clientSecret", clientSecret)
     home.setInitParameter("appAccessToken", appAccessToken)
     home.setInitParameter("appAccessSecret", appAccessSecret)
+    home.setInitParameter("publicUrl", publicUrl)
 
     context("mongoConfig") = MongoConfiguration(mongoUrl)
   }

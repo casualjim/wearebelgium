@@ -19,6 +19,6 @@ class UriExt(uri: URI) {
 
   private def parsePath(path: String): Seq[String] = {
     val ps = if (path.nonBlank && path.startsWith("/")) path.substring(1) else path
-    if (ps.nonBlank) ps.split("/").map(_.urlDecode).toList else Nil
+    ps.blankOption map (_.split("/").map(_.urlDecode).toList) getOrElse Nil
   }
 }

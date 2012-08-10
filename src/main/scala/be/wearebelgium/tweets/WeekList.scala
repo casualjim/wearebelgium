@@ -8,6 +8,7 @@ trait Week {
   def spansYears: Boolean
   def spansMonths: Boolean
   def isBooked: Boolean = false
+  def participant: Option[Participant] = None
 }
 
 case class DefaultWeek(number: Int, year: Int = DateTime.now.year.get) extends Week {
@@ -21,7 +22,7 @@ case class DefaultWeek(number: Int, year: Int = DateTime.now.year.get) extends W
   lazy val spansMonths = startDate.monthOfYear.get != endDate.monthOfYear.get
 }
 
-case class BookedWeek(private val week: Week, participant: Option[Participant]) extends Week {
+case class BookedWeek(private val week: Week, override val participant: Option[Participant]) extends Week {
   def number = week.number
   def startDate = week.startDate
   def endDate = week.endDate
@@ -61,7 +62,7 @@ class WeekList(startWeek: Week, maxItems: Int) extends collection.TraversablePro
       BookedWeek(wk, None)
     }
     val mixed = (unbooked ++ bookings)
-    mixed.toList.sortWith((left, right) ⇒ if (left.year == right.year) left.number > right.number else left.year > right.year)
+    mixed.toList.sortWith((left, right) ⇒ if (left.year == right.year) left.number < right.number else left.year < right.year)
   }
 
   private def bookedWeeks(dao: ParticipantDao, coll: MongoCollection, year: Int, start: Int, end: Int) =

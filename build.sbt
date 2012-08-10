@@ -32,9 +32,9 @@ libraryDependencies ++= Seq(
   "junit"                    % "junit"                  % "4.10"                % "test",
   "org.scalatra" % "scalatra-specs2" % "2.2.0-SNAPSHOT" % "test",
   "ch.qos.logback" % "logback-classic" % "1.0.6" % "runtime",
-  "org.eclipse.jetty" % "jetty-webapp" % "8.1.5.v20120716" % "container",
+  "org.eclipse.jetty" % "jetty-webapp" % "8.1.5.v20120716" % "compile;container",
   "org.eclipse.jetty" % "test-jetty-servlet" % "8.1.5.v20120716" % "test",
-  "org.eclipse.jetty.orbit" % "javax.servlet" % "3.0.0.v201112011016" % "container;provided;test" artifacts (Artifact("javax.servlet", "jar", "jar"))
+  "org.eclipse.jetty.orbit" % "javax.servlet" % "3.0.0.v201112011016" % "container;compile;test" artifacts (Artifact("javax.servlet", "jar", "jar"))
 )
 
 resolvers += "Sonatype OSS Snapshots" at "http://oss.sonatype.org/content/repositories/snapshots/"
@@ -141,7 +141,9 @@ buildInfoKeys := Seq[Scoped](name, version, scalaVersion, sbtVersion)
 
 buildInfoPackage := "be.wearebelgium"
 
-seq(startScriptForWarSettings: _*)
+mainClass := Some("be.wearebelgium.Main")
+
+seq(startScriptForClassesSettings: _*)
 
 startScriptJettyVersion in Compile := "8.1.5.v20120716"
 

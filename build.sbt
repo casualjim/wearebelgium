@@ -165,4 +165,4 @@ wroFile in (Compile, generateResources) <<= (baseDirectory)(_ / "project" / "wro
 
 propertiesFile in (Compile, generateResources) <<= (baseDirectory)(_ / "project" / "wro.properties")
 
-seq(pomGenSettings:_*)
+// seq(pomGenSettings:_*)

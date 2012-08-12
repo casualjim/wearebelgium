@@ -6,6 +6,7 @@ import ScalateKeys._
 import Wro4jKeys._
 import net.liftweb.json._
 import JsonDSL._
+import JelasticKeys._
 
 organization := "be.wearebelgium"
 
@@ -17,7 +18,11 @@ scalaVersion := "2.9.2"
 
 seq(webSettings :_*)
 
+
+
 classpathTypes ~= (_ + "orbit")
+
+crossPaths := false
 
 libraryDependencies ++= Seq(
   "org.scalatra" % "scalatra" % "2.2.0-SNAPSHOT",
@@ -25,16 +30,17 @@ libraryDependencies ++= Seq(
   "org.scalatra" % "scalatra-lift-json" % "2.2.0-SNAPSHOT",
   "org.scalatra" % "contrib-commons" % "1.1.0-SNAPSHOT",
   "com.novus" %% "salat" % "1.9.0",
-  "io.backchat.inflector"  %% "scala-inflector"    % "1.3.3",
+  "com.typesafe" % "config" % "0.5.0",
+  "io.backchat.inflector"  %% "scala-inflector"    % "1.3.4",
   "commons-codec"            % "commons-codec"          % "1.6",
   "net.databinder.dispatch" %% "core" % "0.9.0",
   "org.scala-tools.time"     % "time_2.9.1"             % "0.5",
   "junit"                    % "junit"                  % "4.10"                % "test",
   "org.scalatra" % "scalatra-specs2" % "2.2.0-SNAPSHOT" % "test",
   "ch.qos.logback" % "logback-classic" % "1.0.6" % "runtime",
-  "org.eclipse.jetty" % "jetty-webapp" % "8.1.5.v20120716" % "compile;container",
+  "org.eclipse.jetty" % "jetty-webapp" % "8.1.5.v20120716" % "container",
   "org.eclipse.jetty" % "test-jetty-servlet" % "8.1.5.v20120716" % "test",
-  "org.eclipse.jetty.orbit" % "javax.servlet" % "3.0.0.v201112011016" % "container;compile;test" artifacts (Artifact("javax.servlet", "jar", "jar"))
+  "org.eclipse.jetty.orbit" % "javax.servlet" % "3.0.0.v201112011016" % "container;provided;test" artifacts (Artifact("javax.servlet", "jar", "jar"))
 )
 
 resolvers += "Sonatype OSS Snapshots" at "http://oss.sonatype.org/content/repositories/snapshots/"
@@ -162,8 +168,8 @@ compile in Compile <<= (compile in Compile).dependsOn(generateResources in Compi
 (warPostProcess in Compile) <<= (target in Compile) map { tgt => 
   val webapp = tgt / "webapp"
   () => {
-    val files =  Seq(webapp / "WEB-INF" / "lib", webapp / "js", webapp / "css", webapp / "WEB-INF" / "classes")
-    println("deleting: " + files.map(_.getAbsolutePath).mkString("[", ", ", "]"))
+    // val files =  Seq(webapp / "WEB-INF" / "lib", webapp / "js", webapp / "css", webapp / "WEB-INF" / "classes")
+    val files = Seq(webapp / "js", webapp / "css")
     IO.delete(files)
   }
 }
@@ -179,3 +185,15 @@ propertiesFile in (Compile, generateResources) <<= (baseDirectory)(_ / "project"
 (stage in Compile) <<= (stage in Compile).dependsOn(com.github.siasia.PluginKeys.packageWar in Compile)
 
 // seq(pomGenSettings:_*)
+
+seq(jelasticSettings:_*)
+
+email in deploy := "ivan@flanders.co.nz"
+
+password in deploy := "6hQTnvlNJN"
+
+apiHoster := "app.j.layershift.co.uk"
+
+environment in deploy := "wearebelgium"
+
+

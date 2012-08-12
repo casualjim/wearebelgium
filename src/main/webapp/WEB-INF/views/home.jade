@@ -2,9 +2,12 @@
 
 .hero-unit
   h1 We Are Belgium
-  p Random belgian people tweeting 
+  p Random belgian people tweeting about random belgian things in belgianese
   p
 
+.row
+  .span12.righted
+    a add update
 - weeks.foreach { week =>
   - val rowId = week.number.toString + "-" + week.year.toString
   - import org.joda.time.format.DateTimeFormat.shortDate

@@ -19,28 +19,23 @@ class HomeServlet extends ScalatraServlet with Logging with ScalateSupport with 
   var twitterProvider: OAuthProvider = null
   var twitterApi: TwitterApiCalls = null
 
-  def mongoConfig = servletContext("mongoConfig").asInstanceOf[MongoConfiguration]
+  def settings = servletContext("wearebelgium.settings").asInstanceOf[Settings]
+  def mongoConfig = settings.mongo
   var participantDao: ParticipantDao = null
   var bookings: MongoCollection = null
 
   override def initialize(config: ServletConfig) {
     super.initialize(config)
-    (config.getInitParameter("clientId").blankOption, config.getInitParameter("clientSecret").blankOption) match {
-      case (Some(clientId), Some(clientSecret)) ⇒
-        twitterProvider = OAuthProvider("twitter", clientId, clientSecret, Nil)
-        val accTok = config.getInitParameter("appAccessToken")
-        val accSec = config.getInitParameter("appAccessSecret")
-        twitterApi = new TwitterApiCalls(OAuthToken(accTok, accSec), twitterProvider, callbackUrl(config))
-      case _ ⇒ throw new RuntimeException("client id and secret need to be configured")
-    }
+    twitterProvider = OAuthProvider("twitter", settings.twitter.clientId, settings.twitter.clientSecret, Nil)
+    twitterApi = new TwitterApiCalls(OAuthToken(settings.twitter.accessToken, settings.twitter.accessSecret), twitterProvider, callbackUrl)
     participantDao = new ParticipantDao(mongoConfig.db("participants"))
     bookings = mongoConfig.db("bookings")
     bookings.ensureIndex(Map("number" -> 1, "year" -> 1), "bookings_number_year_idx", unique = true)
     bookings.ensureIndex("pId")
   }
 
-  def callbackUrl(config: ServletConfig) = {
-    val pub = config.getInitParameter("publicUrl")
+  def callbackUrl = {
+    val pub = settings.web.guiUrl
     pub + urlWithContextPath("auth/twitter/callback")
   }
 

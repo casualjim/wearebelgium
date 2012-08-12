@@ -4,6 +4,10 @@ import scala.util.control.Exception.ignoring
 import com.mongodb.casbah.commons.conversions.scala.{ DeregisterJodaTimeConversionHelpers, RegisterJodaTimeConversionHelpers }
 import java.net.URI
 
+case class TwitterConfig(clientId: String, clientSecret: String, accessToken: String, accessSecret: String)
+
+case class WebConfig(domain: String, port: Int, appUrl: String, guiUrl: String)
+
 object MongoConfiguration {
   def apply(uri: String): MongoConfiguration = MongoConfiguration(new URI(uri))
 }

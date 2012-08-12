@@ -21,3 +21,5 @@ libraryDependencies += "net.liftweb" % "lift-json_2.9.1" % "2.4"
 addSbtPlugin("com.bowlingx" % "xsbt-wro4j-plugin" % "0.1.0-SNAPSHOT")
 
 addSbtPlugin("com.typesafe.sbtscalariform" % "sbtscalariform" % "0.5.0")
+
+addSbtPlugin("com.github.casualjim" % "sbt-jelastic-deploy" % "0.1.2")

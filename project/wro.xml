@@ -7,6 +7,7 @@
     <js>/js/lib/bootstrap.js</js>
     <js>/js/lib/underscore.js</js>
     <js>/js/app/*.coffee</js>
-    <js>/js/*.coffee</js>
+    <js minimize="false">/js/plugins/*.coffee</js>
+    <js minimize="false">/js/*.coffee</js>
   </group>
 </groups>

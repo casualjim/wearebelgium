@@ -188,12 +188,6 @@ propertiesFile in (Compile, generateResources) <<= (baseDirectory)(_ / "project"
 
 seq(jelasticSettings:_*)
 
-email in deploy := "ivan@flanders.co.nz"
-
-password in deploy := "6hQTnvlNJN"
-
-apiHoster := "app.j.layershift.co.uk"
-
 environment in deploy := "wearebelgium"
 
 

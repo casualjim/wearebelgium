@@ -1,7 +1,6 @@
 package be.wearebelgium.tweets
 
 import org.scalatra._
-import extension.TypedParamSupport
 import org.scalatra.liftjson._
 import scalate.ScalateSupport
 import javax.servlet.http.HttpServletRequest

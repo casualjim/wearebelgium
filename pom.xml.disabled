@@ -27,13 +27,48 @@
             <url>http://flanders.co.nz/</url>
         </developer>
     </developers>
-
     <dependencies>
         <dependency>
             <groupId>org.scala-lang</groupId>
             <artifactId>scala-library</artifactId>
             <version>${scala.version}</version>
             <scope>runtime</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.fasterxml.jackson.core</groupId>
+            <artifactId>jackson-databind</artifactId>
+            <version>2.0.5</version>
+            <scope>compile</scope>
+        </dependency>
+         <dependency>
+            <groupId>com.fasterxml.jackson.module</groupId>
+            <artifactId>jackson-module-scala</artifactId>
+            <version>2.0.2</version>
+            <scope>compile</scope>
+        </dependency>
+         <dependency>
+            <groupId>com.fasterxml.jackson.dataformat</groupId>
+            <artifactId>jackson-dataformat-xml</artifactId>
+            <version>2.0.4</version>
+            <scope>compile</scope>
+        </dependency>
+        <dependency>
+            <groupId>commons-codec</groupId>
+            <artifactId>commons-codec</artifactId>
+            <version>1.6</version>
+            <scope>compile</scope>
+        </dependency>
+         <dependency>
+            <groupId>org.scala-tools.time</groupId>
+            <artifactId>time_2.9.1</artifactId>
+            <version>0.5</version>
+            <scope>compile</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.typesafe</groupId>
+            <artifactId>config</artifactId>
+            <version>0.5.0</version>
+            <scope>compile</scope>
         </dependency>
         <dependency>
             <groupId>org.scalatra</groupId>
@@ -51,6 +86,12 @@
             <groupId>org.scalatra</groupId>
             <artifactId>scalatra-lift-json</artifactId>
             <version>${scalatra.version}</version>
+            <scope>compile</scope>            
+        </dependency>
+        <dependency>
+            <groupId>org.scalatra</groupId>
+            <artifactId>contrib-commons</artifactId>
+            <version>1.1.0-SNAPSHOT</version>
             <scope>compile</scope>            
         </dependency>
         <dependency>
@@ -145,7 +186,7 @@
         <dependency>
           <groupId>io.backchat.inflector</groupId>
           <artifactId>scala-inflector_${scala.version}</artifactId>
-          <version>1.3.3</version>
+          <version>1.3.4</version>
           <scope>compile</scope>
         </dependency>
     </dependencies>
@@ -330,9 +371,8 @@
 			    <configuration>
 			      <targetGroups>main</targetGroups>
 			      <minimize>true</minimize>
-                  <cssDestinationFolder>${basedir}/target/wro4j/assets/css/</cssDestinationFolder>
-                  <jsDestinationFolder>${basedir}/target/wro4j/assets/js/</jsDestinationFolder>
-			      <contextFolder>${basedir}/src/main/webapp/</contextFolder>
+            <destinationFolder>${basedir}/target/wro4j/assets</destinationFolder>
+            <contextFolder>${basedir}/src/main/webapp/</contextFolder>
 			      <wroFile>${basedir}/project/wro.xml</wroFile>
                   <!--<wroManagerFactory>com.mycompany.MyCustomWroManagerFactory</wroManagerFactory>
 			      <ignoreMissingResources>false</ignoreMissingResources>-->

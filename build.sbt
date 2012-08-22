@@ -28,8 +28,7 @@ libraryDependencies ++= Seq(
   "org.scalatra" % "scalatra" % "2.2.0-SNAPSHOT",
   "org.scalatra" % "scalatra-scalate" % "2.2.0-SNAPSHOT",  
   "org.scalatra" % "scalatra-lift-json" % "2.2.0-SNAPSHOT",
-  "org.scalatra" % "contrib-commons" % "1.1.0-SNAPSHOT",
-  "com.novus" %% "salat" % "1.9.0",
+  "com.novus" %% "salat" % "1.9.0" exclude("org.scala-lang", "scalap"),
   "com.typesafe" % "config" % "0.5.0",
   "io.backchat.inflector"  %% "scala-inflector"    % "1.3.4",
   "commons-codec"            % "commons-codec"          % "1.6",
@@ -44,6 +43,8 @@ libraryDependencies ++= Seq(
 )
 
 resolvers += "Sonatype OSS Snapshots" at "http://oss.sonatype.org/content/repositories/snapshots/"
+
+resolvers += "Sonatype OSS Snapshots" at "http://oss.sonatype.org/content/repositories/releases/"
 
 testOptions += Tests.Argument(TestFrameworks.Specs2, "console", "junitxml")
 

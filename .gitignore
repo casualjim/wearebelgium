@@ -62,16 +62,5 @@ target
 .project
 .ensime*
 *.sublime-*
-src/main/webapp/js/app.js
-src/main/javascript/**/*.js
-src/main/javascript/*.js
-src/main/javascript/**/*.jsm
-src/main/javascript/*.jsm
 .cache
-src/main/webapp/scripts
-src/main/webapp/css
-src/main/webapp/img
-src/main/webapp/build.txt
-src/main/webapp/index.html
 node_modules
-src/main/webapp/app.html
